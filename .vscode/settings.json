@@ -1,0 +1,6 @@
+{
+    "prettier.semi": true,
+    "prettier.tabWidth": 3,
+    "files.insertFinalNewline": true,
+    "prettier.endOfLine": "cr"
+}
