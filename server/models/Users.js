@@ -1,54 +1,42 @@
-const mongoose = require('mongoose');
+const mysql = require('mysql2/promise');
 
-const { Schema } = mongoose;
-const validator = require('validator');
+async function createUsersTable() {
+  const connection = await mysql.createConnection({
+    host: 'root',
+    user: 'myusername',
+    password: 'mypassword',
+    database: 'alumni-net',
+  });
 
-const UsersSchema = new Schema({
-  email: {
-    type: String,
-    trim: true,
-    required: true,
-    unique: true,
-    lowercase: true,
-    validate: [
-      { validator: value => validator.isEmail(value), msg: 'Invalid email' },
-    ],
-  },
-  password: {
-    type: String,
-    trim: true,
-    required: true,
-    validate: [
-      {
-        validator: function (value) {
-          return value.length >= 6;
-        },
-        msg: 'Password length must be at least 6 characters',
-      },
-    ],
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  refreshToken: String,
-  role: {
-    type: String,
-    enum: ['admin', 'student', 'teacher'],
-    required: true,
-  },
-},
-{ timestamps: true,
-  get: time => time.toDateString() 
-});
+  try {
+    // Create Users table
+    await connection.execute(`
+      CREATE TABLE Users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        firstName VARCHAR(255) NOT NULL,
+        lastName VARCHAR(255) NOT NULL,
+        refreshToken VARCHAR(255),
+        role ENUM('admin', 'alumni', 'non-related') NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
 
-// Метод для проверки refresh токена
-UsersSchema.methods.isValidRefreshToken = function (providedRefreshToken) {
-  return this.refreshToken === providedRefreshToken;
-};
+    // Add constraint for password length
+    await connection.execute(`
+      ALTER TABLE Users ADD CONSTRAINT check_password_length CHECK (LENGTH(password) >= 6)
+    `);
 
-module.exports = mongoose.model('Users', UsersSchema);
+    console.log('Users table created successfully.');
+  } catch (error) {
+    console.error('Error creating Users table:', error.message);
+  } finally {
+    // Close the connection
+    await connection.end();
+  }
+}
+
+// Execute the function
+createUsersTable();
