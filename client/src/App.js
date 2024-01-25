@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 
 function App() {
-   const [data, setData] = useState([{}]);
+   const [data, setData] = useState({ users: [] });
 
    useEffect(() => {
-      fetch("/api")  // This will use the proxy defined in package.json
+      fetch("/users")
          .then((response) => response.json())
          .then((data) => {
             setData(data);
@@ -14,10 +14,17 @@ function App() {
 
    return (
       <div>
-         {typeof (data.users) === "undefined" ? (
+         {Array.isArray(data.users) && data.users.length === 0 ? (
             <p>Loading...</p>
          ) : (
-            data.users.map((user, i) => (<p key={i}>{user}</p>))
+            <ul>
+               {data.users.map((user, i) => (
+                  <li key={i}>
+                     <strong>Email:</strong> {user.email},{" "}
+                     <strong>First Name:</strong> {user.firstname}
+                  </li>
+               ))}
+            </ul>
          )}
       </div>
    );
