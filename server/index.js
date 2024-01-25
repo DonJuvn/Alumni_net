@@ -1,4 +1,5 @@
-const express = require("express");const bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const {
    getUsers,
@@ -10,6 +11,10 @@ const {
 
 const app = express();
 const port = 8000;
+const database = "alumninet";
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get("/api", (req, res) => {
    res.json({ users: ["Zhalgas", "Daniyar", "Yersultan"] });
@@ -17,7 +22,7 @@ app.get("/api", (req, res) => {
 
 app.get("/api/users", async (req, res) => {
    try {
-      const users = await getUsers();
+      const users = await getUsers(database);
       res.json(users);
    } catch (error) {
       console.error("Error fetching users:", error);
@@ -28,7 +33,7 @@ app.get("/api/users", async (req, res) => {
 app.get("/api/users/:id", async (req, res) => {
    try {
       const id = req.params.id;
-      const user = await getUserById(id);
+      const user = await getUserById(database, id);
       res.json(user);
    } catch (error) {
       console.error("Error fetching user by ID:", error);
@@ -39,7 +44,7 @@ app.get("/api/users/:id", async (req, res) => {
 app.post("/api/users", async (req, res) => {
    try {
       const { email, firstname } = req.body;
-      const user = await saveUser(email, firstname);
+      const user = await saveUser(database, email, firstname);
       res.json(user);
    } catch (error) {
       console.error("Error creating user:", error);
@@ -51,8 +56,12 @@ app.put("/api/users/:id", async (req, res) => {
    try {
       const { id } = req.params;
       const { updatedEmail, updatedFirstName } = req.body;
-      await updateUser(id, updatedEmail, updatedFirstName);
-      const updatedUser = await getUserById(id);
+      const updatedUser = await updateUser(
+         database,
+         id,
+         updatedEmail,
+         updatedFirstName
+      );
       res.json(updatedUser);
    } catch (error) {
       console.error("Error updating user:", error);
@@ -63,16 +72,13 @@ app.delete("/api/users/:id", async (req, res) => {
    const { id } = req.params;
 
    try {
-      await deleteUser(id);
+      await deleteUser(database, id);
       res.json({ message: "User deleted successfully" });
    } catch (error) {
       console.error("Error deleting user:", error);
       res.status(500).json({ error: "Internal Server Error" });
    }
 });
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 app.listen(port, () => {
    console.log(`Server is running on port ${port}`);
