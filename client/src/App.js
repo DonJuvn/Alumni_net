@@ -1,6 +1,8 @@
 // App.js
 import React, { useState, useEffect } from "react";
 
+import { Navigation } from "./components/navigation";
+
 function App() {
    const [data, setData] = useState({ users: [] });
 
@@ -14,6 +16,7 @@ function App() {
 
    return (
       <div>
+         <Navigation />
          {Array.isArray(data.users) && data.users.length === 0 ? (
             <p>Loading...</p>
          ) : (
