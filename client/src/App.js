@@ -4,19 +4,19 @@ import React, { useState, useEffect } from "react";
 import { Navigation } from "./components/navigation";
 
 function App() {
-   const [data, setData] = useState({ users: [] });
+   // const [data, setData] = useState({ users: [] });
 
-   useEffect(() => {
-      fetch("/users")
-         .then((response) => response.json())
-         .then((data) => {
-            setData(data);
-         });
-   }, []);
+   // useEffect(() => {
+   //    fetch("/users")
+   //       .then((response) => response.json())
+   //       .then((data) => {
+   //          setData(data);
+   //       });
+   // }, []);
 
    return (
       <div>
-         <Navigation />
+         {/* <Navigation />
          {Array.isArray(data.users) && data.users.length === 0 ? (
             <p>Loading...</p>
          ) : (
@@ -28,7 +28,7 @@ function App() {
                   </li>
                ))}
             </ul>
-         )}
+         )} */}
       </div>
    );
 }
