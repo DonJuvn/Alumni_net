@@ -1,36 +1,27 @@
 // App.js
-import React, { useState, useEffect } from "react";
-
-import { Navigation } from "./components/navigation";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navigation from "./components/navigation";
+import Home from "./pages/Home";
+import News from "./pages/News";
+import Products from "./pages/Products";
+import Profile from "./pages/Profile";
 
 function App() {
-   // const [data, setData] = useState({ users: [] });
-
-   // useEffect(() => {
-   //    fetch("/users")
-   //       .then((response) => response.json())
-   //       .then((data) => {
-   //          setData(data);
-   //       });
-   // }, []);
-
-   return (
+  return (
+    <Router>
       <div>
-         {/* <Navigation />
-         {Array.isArray(data.users) && data.users.length === 0 ? (
-            <p>Loading...</p>
-         ) : (
-            <ul>
-               {data.users.map((user, i) => (
-                  <li key={i}>
-                     <strong>Email:</strong> {user.email},{" "}
-                     <strong>First Name:</strong> {user.firstname}
-                  </li>
-               ))}
-            </ul>
-         )} */}
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* Add routes for other pages */}
+        </Routes>
       </div>
-   );
+    </Router>
+  );
 }
 
 export default App;
